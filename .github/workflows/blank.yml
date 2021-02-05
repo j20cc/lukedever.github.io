@@ -37,7 +37,10 @@ jobs:
         # publish
         hexo generate
         # 替换使用cdn
-        find . -type f -name *.html | xargs sed -i 's/src="\/js\//https:\/\/cdn.jsdelivr.net\/gh\/lukedever\/lukedever.github.io@gh-pages\/js\//g'
+        find . -type f -name *.html | xargs sed -i 's/src="\/js\//src="https:\/\/cdn.jsdelivr.net\/gh\/lukedever\/lukedever.github.io@gh-pages\/js\//g'
+        find . -type f -name *.html | xargs sed -i 's/href="\/css\//href="https:\/\/cdn.jsdelivr.net\/gh\/lukedever\/lukedever.github.io@gh-pages\/css\//g'
+        find . -type f -name *.html | xargs sed -i 's/\/script.js/\/script.min.js/g'
+        find . -type f -name *.html | xargs sed -i 's/\/style.css/\/style.min.css/g'
         # 执行部署程序
         hexo deploy 
 
