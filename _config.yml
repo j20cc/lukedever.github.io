@@ -9,7 +9,7 @@ description: ''
 keywords:
 author: Luke44
 language: en
-timezone: ''
+timezone: 'zh-CN'
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://example.com/child' and root as '/child/'
@@ -98,7 +98,7 @@ ignore:
 # Extensions
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
-theme: landscape
+theme: pure
 
 # Deployment
 ## Docs: https://hexo.io/docs/one-command-deployment
@@ -106,3 +106,35 @@ deploy:
   type: 'git'
   repo: 'git@github.com:lukedever/lukedever.github.io.git'
   branch: 'gh-pages'
+
+# 导航菜单
+menu:
+  Home: . 
+  Archives: archives # 归档
+  Categories: categories # 分类
+  Tags: tags # 标签
+  Repository: repository # github repositories
+  Books: books     # 书单
+  Links: links # 友链
+  About: about # 关于
+
+# 导航菜单图标（font awesome）
+menu_icons:
+  enable: true # 是否启用菜单图标
+  home: icon-home-fill
+  archives: icon-archives-fill
+  categories: icon-folder
+  tags: icon-tags
+  repository: icon-project
+  books: icon-book-fill
+  links: icon-friendship
+  about: icon-cup-fill
+
+# Search
+search:
+  insight: true
+
+share:
+  enable: true  # 是否启用分享
+  sites: weibo,qq,wechat,facebook,twitter  # PC端显示的分享图标
+  mobile_sites: weibo,qq,qzone  # 移动端显示的分享图标
