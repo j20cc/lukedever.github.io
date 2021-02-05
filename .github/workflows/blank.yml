@@ -35,5 +35,9 @@ jobs:
     - name: Deploy
       run: |
         # publish
-        hexo generate && hexo deploy # 执行部署程序
+        hexo generate
+        # 替换使用cdn
+        find . -type f -name *.html | xargs sed -i 's/src="\/js\//https:\/\/cdn.jsdelivr.net\/gh\/lukedever\/lukedever.github.io@gh-pages\/js\//g'
+        # 执行部署程序
+        hexo deploy 
 
