@@ -8,8 +8,8 @@ subtitle: 'luke developer'
 description: ''
 keywords:
 author: Luke44
-language: en
-timezone: 'zh-CN'
+language: zh-CN
+timezone: 'Asia/Shanghai'
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://example.com/child' and root as '/child/'
