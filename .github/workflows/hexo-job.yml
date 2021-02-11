@@ -36,13 +36,13 @@ jobs:
       run: |
         # publish
         hexo generate
-        echo "替换使用cdn..."
-        find . -type f -name *.html | xargs sed -i 's/src="\/js\//src="https:\/\/cdn.jsdelivr.net\/gh\/lukedever\/lukedever.github.io@gh-pages\/js\//g'
-        find . -type f -name *.html | xargs sed -i 's/href="\/css\//href="https:\/\/cdn.jsdelivr.net\/gh\/lukedever\/lukedever.github.io@gh-pages\/css\//g'
-        find . -type f -name *.html | xargs sed -i 's/\/fancybox\//https:\/\/cdn.jsdelivr.net\/gh\/lukedever\/lukedever.github.io@gh-pages\/fancybox\//g'
-        find . -type f -name *.html | xargs sed -i 's/\/script.js/\/script.min.js/g'
-        find . -type f -name *.html | xargs sed -i 's/\/style.css/\/style.min.css/g'
-        echo "替换使用cdn完成"
+        # echo "替换使用cdn..."
+        # find . -type f -name *.html | xargs sed -i 's/src="\/js\//src="https:\/\/cdn.jsdelivr.net\/gh\/lukedever\/lukedever.github.io@gh-pages\/js\//g'
+        # find . -type f -name *.html | xargs sed -i 's/href="\/css\//href="https:\/\/cdn.jsdelivr.net\/gh\/lukedever\/lukedever.github.io@gh-pages\/css\//g'
+        # find . -type f -name *.html | xargs sed -i 's/\/fancybox\//https:\/\/cdn.jsdelivr.net\/gh\/lukedever\/lukedever.github.io@gh-pages\/fancybox\//g'
+        # find . -type f -name *.html | xargs sed -i 's/\/script.js/\/script.min.js/g'
+        # find . -type f -name *.html | xargs sed -i 's/\/style.css/\/style.min.css/g'
+        # echo "替换使用cdn完成"
         # 执行部署程序
         hexo deploy 
 
