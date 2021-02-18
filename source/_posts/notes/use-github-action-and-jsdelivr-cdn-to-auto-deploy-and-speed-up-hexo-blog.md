@@ -19,7 +19,7 @@ tags:
 deploy:
   type: 'git'
   repo: 'git@github.com:your_github_name/your_github_name.github.io.git'
-  branch: 'gh-pages'
+  branch: 'master'
 ```
 
 4. 在本地执行 `hexo deploy` 后就会自动在本地生成静态文件并推送到 `your_github_name.github.io` 这个仓库，然后在该仓库的设置中开启 `GitHub Pages`，随后访问 [http://your_github_name.github.io](http://your_github_name.github.io) 就能看到你的博客
