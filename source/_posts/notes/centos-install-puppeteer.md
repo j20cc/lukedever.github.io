@@ -24,6 +24,20 @@ $ sudo yum install -y alsa-lib.x86_64 atk.x86_64 cups-libs.x86_64 gtk3.x86_64 \
 $ sudo yum update nss -y
 ```
 
+对于启动时报的 `No usable sandbox` 错误，可以在启动参数加上 `--no-sandbox --disable-setuid-sandbox`
+
+```js
+const browser = await puppeteer.launch(
+    {
+        userDataDir: chrome_user_data_directory,
+        args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+        ],
+    }
+);
+```
+
 继续使用时确实可以启动浏览器，但是截图发现字体有缺失，安装一下应该可以正常使用了
 
 ```sh
@@ -44,7 +58,23 @@ puppeteer.use(StealthPlugin())
 // your puppeterr code ...
 ```
 
-2. 等待页面跳转完成
+2. 缓存用户信息
+
+使用过程中发现每次运行脚本如果需要登录都必须登录一次，非常麻烦，这时可以通过配置用户目录来实现缓存用户信息
+
+```js
+// windows
+//const chrome_user_data_directory = 'C:\\Users\\<user_name>\\AppData\\Local\\Chromium\\User Data';
+// linux
+const chrome_user_data_directory = '~/.config/chromium';
+const browser = await puppeteer.launch(
+    {
+        userDataDir: chrome_user_data_directory
+    }
+);
+```
+
+3. 等待页面跳转完成
 
 有的页面需要跳转，需要等待完全跳转完才继续进行下一步操作时可以用 `page.waitForNavigation` 完成
 
@@ -54,7 +84,7 @@ await navigationPromise;
 // 多次使用 await navigationPromise;
 ```
 
-3. 直到完全打开一个页面
+4. 直到完全打开一个页面
 
 使用 `page.goto(url, options)` 打开一个页面时，可以通过 options 对象配置超时时间 timeout(单位毫秒)，waitUntil 配置什么时候算打开完成，选项有
 
@@ -63,7 +93,7 @@ await navigationPromise;
 - networkidle0 - 不再有网络连接时触发（至少500毫秒后）
 - networkidle2 - 只有2个网络连接时触发（至少500毫秒后）
 
-4. 页面内执行 js 方法
+5. 页面内执行 js 方法
 
 有时候想在页面执行一段 js 方法，比如模拟下拉，可以使用 `page.evaluate` 方法，代码如下
 
