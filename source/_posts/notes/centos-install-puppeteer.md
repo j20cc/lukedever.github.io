@@ -66,7 +66,7 @@ puppeteer.use(StealthPlugin())
 // windows
 //const chrome_user_data_directory = 'C:\\Users\\<user_name>\\AppData\\Local\\Chromium\\User Data';
 // linux
-const chrome_user_data_directory = '~/.config/chromium';
+const chrome_user_data_directory = '/home/<user_name>/.config/chromium';
 const browser = await puppeteer.launch(
     {
         userDataDir: chrome_user_data_directory
@@ -74,7 +74,23 @@ const browser = await puppeteer.launch(
 );
 ```
 
-3. 等待页面跳转完成
+3. 设置代理
+
+通过启动参数设置代理，如下
+
+```js
+const browser = await puppeteer.launch(
+    {
+        args: [
+        '--proxy-server=127.0.0.1:9876',
+        // Use proxy for localhost URLs
+        '--proxy-bypass-list=<-loopback>',
+        ],
+    }
+);
+```
+
+4. 等待页面跳转完成
 
 有的页面需要跳转，需要等待完全跳转完才继续进行下一步操作时可以用 `page.waitForNavigation` 完成
 
@@ -84,7 +100,7 @@ await navigationPromise;
 // 多次使用 await navigationPromise;
 ```
 
-4. 直到完全打开一个页面
+5. 直到完全打开一个页面
 
 使用 `page.goto(url, options)` 打开一个页面时，可以通过 options 对象配置超时时间 timeout(单位毫秒)，waitUntil 配置什么时候算打开完成，选项有
 
@@ -93,7 +109,7 @@ await navigationPromise;
 - networkidle0 - 不再有网络连接时触发（至少500毫秒后）
 - networkidle2 - 只有2个网络连接时触发（至少500毫秒后）
 
-5. 页面内执行 js 方法
+6. 页面内执行 js 方法
 
 有时候想在页面执行一段 js 方法，比如模拟下拉，可以使用 `page.evaluate` 方法，代码如下
 
