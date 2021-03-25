@@ -1,6 +1,6 @@
 ---
-title: 动态规划入门学习笔记
-date: 2021-03-02 17:02:47
+title: 通过换硬币例题来入门动态规划
+date: 2021-03-25 17:02:47
 categories:
 - 算法
 tags:
@@ -21,7 +21,7 @@ tags:
 2. 计数
 3. 是否存在
 
-大概率可以用动态规划来做
+**大概率**可以用动态规划来做
 
 ## 一般步骤
 
@@ -52,35 +52,35 @@ tags:
 ```go
 func coinChange(coins []int, m int) int {
     //开辟一个27大小的整形切片
-	dp := make([]int, m+1)
+    dp := make([]int, m+1)
     //已知组成0的面值需要0枚
-	dp[0] = 0
+    dp[0] = 0
 
-	n := len(coins)
+    n := len(coins)
     //从面值1开始往27计算
-	for i := 1; i <= m; i++ {
+    for i := 1; i <= m; i++ {
         //初始为最大值，后面更新最小值
-		dp[i] = math.MaxInt64
+        dp[i] = math.MaxInt64
         //遍历每种硬币的情况
-		for j := 0; j < n; j++ {
+        for j := 0; j < n; j++ {
             //注意边界
-			if i >= coins[j] && dp[i-coins[j]] != math.MaxInt64 {
-				dp[i] = min(dp[i-coins[j]]+1, dp[i])
-			}
-		}
-	}
+            if i >= coins[j] && dp[i-coins[j]] != math.MaxInt64 {
+                dp[i] = min(dp[i-coins[j]]+1, dp[i])
+            }
+        }
+    }
 
-	if dp[m] == math.MaxInt64 {
-		dp[m] = -1
-	}
+    if dp[m] == math.MaxInt64 {
+        dp[m] = -1
+    }
 
-	return dp[m]
+    return dp[m]
 }
 
 func min(a, b int) int {
-	if a >= b {
-		return b
-	}
-	return a
+    if a >= b {
+        return b
+    }
+    return a
 }
 ```
