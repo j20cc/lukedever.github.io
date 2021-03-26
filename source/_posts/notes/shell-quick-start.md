@@ -6,3 +6,20 @@ categories:
 tags:
 - 随笔
 ---
+
+## 起步
+
+## 变量
+
+定义变量
+
+拼接变量
+
+## 条件
+
+if
+
+swith
+
+## Makefile
+
