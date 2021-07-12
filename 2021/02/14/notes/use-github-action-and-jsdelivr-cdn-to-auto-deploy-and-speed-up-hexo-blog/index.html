@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>使用github-action自动部署hexo博客，并配置免费cdn加速访问 | 路客啊路客</title>
+  <meta name="description" content="安装 hexo 按照官方文档创建一个博客 https:&#x2F;&#x2F;hexo.io&#x2F;zh-cn&#x2F;docs&#x2F;  创建两个仓库，一个名为 blog_name 的仓库用来放 hexo 博客原始文件，一个名为 your_github_name.github.io 的仓库用来放生成好的静态站点  修改 _config.yml 文件的 deploy 配置   1234deploy:  type: &amp;#x27;git&amp;#">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用github-action自动部署hexo博客，并配置免费cdn加速访问">
+<meta property="og:url" content="https://techub.pw/2021/02/14/notes/use-github-action-and-jsdelivr-cdn-to-auto-deploy-and-speed-up-hexo-blog/index.html">
+<meta property="og:site_name" content="Blog">
+<meta property="og:description" content="安装 hexo 按照官方文档创建一个博客 https:&#x2F;&#x2F;hexo.io&#x2F;zh-cn&#x2F;docs&#x2F;  创建两个仓库，一个名为 blog_name 的仓库用来放 hexo 博客原始文件，一个名为 your_github_name.github.io 的仓库用来放生成好的静态站点  修改 _config.yml 文件的 deploy 配置   1234deploy:  type: &amp;#x27;git&amp;#">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-02-14T09:02:47.000Z">
+<meta property="article:modified_time" content="2021-07-12T02:53:55.205Z">
+<meta property="article:author" content="Luke44">
+<meta property="article:tag" content="随笔">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="https://techub.pw/2021/02/14/notes/use-github-action-and-jsdelivr-cdn-to-auto-deploy-and-speed-up-hexo-blog/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/lukedever" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.png" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">路客</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Go &amp; PHP Developer</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/lukedever" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%AE%97%E6%B3%95/">算法</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9A%8F%E7%AC%94/">随笔</a><span class="category-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/" rel="tag">动态规划</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9A%8F%E7%AC%94/" rel="tag">随笔</a><span class="tag-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/" style="font-size: 13px;">动态规划</a> <a href="/tags/%E9%9A%8F%E7%AC%94/" style="font-size: 14px;">随笔</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">三月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">二月 2021</a><span class="archive-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E7%AE%97%E6%B3%95/">算法</a>
+              </p>
+              <p class="item-title">
+                <a href="/2021/03/25/algorithms/note-of-dynamic-programming/" class="title">通过换硬币例题来入门动态规划</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-03-25T09:02:47.000Z" itemprop="datePublished">2021-03-25</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E9%9A%8F%E7%AC%94/">随笔</a>
+              </p>
+              <p class="item-title">
+                <a href="/2021/03/19/notes/shell-quick-start/" class="title">shell脚本快速入门</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-03-19T18:02:47.000Z" itemprop="datePublished">2021-03-20</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E9%9A%8F%E7%AC%94/">随笔</a>
+              </p>
+              <p class="item-title">
+                <a href="/2021/02/22/notes/centos-install-puppeteer/" class="title">centos安装并使用无头浏览器puppeteer</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-02-22T09:02:47.000Z" itemprop="datePublished">2021-02-22</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E9%9A%8F%E7%AC%94/">随笔</a>
+              </p>
+              <p class="item-title">
+                <a href="/2021/02/14/notes/use-github-action-and-jsdelivr-cdn-to-auto-deploy-and-speed-up-hexo-blog/" class="title">使用github-action自动部署hexo博客，并配置免费cdn加速访问</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-02-14T09:02:47.000Z" itemprop="datePublished">2021-02-14</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-notes/use-github-action-and-jsdelivr-cdn-to-auto-deploy-and-speed-up-hexo-blog" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      使用github-action自动部署hexo博客，并配置免费cdn加速访问
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2021/02/14/notes/use-github-action-and-jsdelivr-cdn-to-auto-deploy-and-speed-up-hexo-blog/" class="article-date">
+	  <time datetime="2021-02-14T09:02:47.000Z" itemprop="datePublished">2021-02-14</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/%E9%9A%8F%E7%AC%94/">随笔</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/%E9%9A%8F%E7%AC%94/" rel="tag">随笔</a>
+  </span>
+
+
+        
+	<span class="article-read hidden-xs">
+	    <i class="icon icon-eye-fill" aria-hidden="true"></i>
+	    <span id="busuanzi_container_page_pv">
+			<span id="busuanzi_value_page_pv">0</span>
+		</span>
+	</span>
+
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2021/02/14/notes/use-github-action-and-jsdelivr-cdn-to-auto-deploy-and-speed-up-hexo-blog/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 855(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 3(分)</span>
+	
+
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h2 id="安装-hexo"><a href="#安装-hexo" class="headerlink" title="安装 hexo"></a>安装 hexo</h2><ol>
+<li><p>按照官方文档创建一个博客 <a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/">https://hexo.io/zh-cn/docs/</a></p>
+</li>
+<li><p>创建两个仓库，一个名为 <code>blog_name</code> 的仓库用来放 hexo 博客原始文件，一个名为 <code>your_github_name.github.io</code> 的仓库用来放生成好的静态站点</p>
+</li>
+<li><p>修改 <code>_config.yml</code> 文件的 <code>deploy</code> 配置</p>
+</li>
+</ol>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">&#x27;git&#x27;</span></span><br><span class="line">  <span class="attr">repo:</span> <span class="string">&#x27;git@github.com:your_github_name/your_github_name.github.io.git&#x27;</span></span><br><span class="line">  <span class="attr">branch:</span> <span class="string">&#x27;master&#x27;</span></span><br></pre></td></tr></table></figure>
+<ol start="4">
+<li>在本地执行 <code>hexo deploy</code> 后就会自动在本地生成静态文件并推送到 <code>your_github_name.github.io</code> 这个仓库，然后在该仓库的设置中开启 <code>GitHub Pages</code>，随后访问 <a target="_blank" rel="noopener" href="http://your_github_name.github.io/">http://your_github_name.github.io</a> 就能看到你的博客</li>
+</ol>
+<h2 id="编写-github-action"><a href="#编写-github-action" class="headerlink" title="编写 github action"></a>编写 github action</h2><p><strong><em>github action</em></strong> 是 github 官方的 ci 工具，可以利用它实现推送 <code>blog_name</code> 仓库时，自动借助 github 的机器远程执行 <code>hexo deploy</code> 来部署博客，这样只需要写完博客推送一下就行</p>
+<p>在远程机器上要推送，需要配置一下 <code>deploy key</code>，但是为了防止直接写在配置文件中被别人获取，可以填写在 <code>blog_name</code> 仓库的 <code>设置=&gt;Secrets</code> 中，Key 为 <code>ACTION_DEPLOY_KEY</code>，Value 为 <code>~/.ssh/id_rsa</code> 中的内容</p>
+<p>在 <code>blog_name</code> 仓库页 <code>Actions</code> 页面新建一个 workflow 文件，填入下面的内容</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">name:</span> <span class="string">Deploy</span> <span class="string">Blog</span></span><br><span class="line"></span><br><span class="line"><span class="attr">on:</span> [<span class="string">push</span>] <span class="comment"># 当有新push时运行</span></span><br><span class="line"></span><br><span class="line"><span class="attr">jobs:</span></span><br><span class="line">  <span class="attr">build:</span> <span class="comment"># 一项叫做build的任务</span></span><br><span class="line"></span><br><span class="line">    <span class="attr">runs-on:</span> <span class="string">ubuntu-latest</span> <span class="comment"># 在最新版的Ubuntu系统下运行</span></span><br><span class="line">    </span><br><span class="line">    <span class="attr">steps:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Checkout</span> <span class="comment"># 将仓库内master分支的内容下载到工作目录</span></span><br><span class="line">      <span class="attr">uses:</span> <span class="string">actions/checkout@v1</span> <span class="comment"># 脚本来自 https://github.com/actions/checkout</span></span><br><span class="line">      </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Use</span> <span class="string">Node.js</span> <span class="number">10.</span><span class="string">x</span> <span class="comment"># 配置Node环境</span></span><br><span class="line">      <span class="attr">uses:</span> <span class="string">actions/setup-node@v1</span> <span class="comment"># 配置脚本来自 https://github.com/actions/setup-node</span></span><br><span class="line">      <span class="attr">with:</span></span><br><span class="line">        <span class="attr">node-version:</span> <span class="string">&quot;10.x&quot;</span></span><br><span class="line">    </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Setup</span> <span class="string">Hexo</span> <span class="string">env</span></span><br><span class="line">      <span class="attr">env:</span></span><br><span class="line">        <span class="attr">ACTION_DEPLOY_KEY:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.ACTION_DEPLOY_KEY</span> <span class="string">&#125;&#125;</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line">        <span class="comment"># set up private key for deploy</span></span><br><span class="line">        <span class="string">mkdir</span> <span class="string">-p</span> <span class="string">~/.ssh/</span></span><br><span class="line">        <span class="string">echo</span> <span class="string">&quot;$ACTION_DEPLOY_KEY&quot;</span> <span class="string">|</span> <span class="string">tr</span> <span class="string">-d</span> <span class="string">&#x27;\r&#x27;</span> <span class="string">&gt;</span> <span class="string">~/.ssh/id_rsa</span> <span class="comment"># 配置秘钥</span></span><br><span class="line">        <span class="string">chmod</span> <span class="number">600</span> <span class="string">~/.ssh/id_rsa</span></span><br><span class="line">        <span class="string">ssh-keyscan</span> <span class="string">github.com</span> <span class="string">&gt;&gt;</span> <span class="string">~/.ssh/known_hosts</span></span><br><span class="line">        <span class="comment"># set git infomation</span></span><br><span class="line">        <span class="string">git</span> <span class="string">config</span> <span class="string">--global</span> <span class="string">user.name</span> <span class="string">&#x27;your_name&#x27;</span> <span class="comment"># 换成你自己的邮箱和名字</span></span><br><span class="line">        <span class="string">git</span> <span class="string">config</span> <span class="string">--global</span> <span class="string">user.email</span> <span class="string">&#x27;your_name@email.com&#x27;</span></span><br><span class="line">        <span class="comment"># install dependencies</span></span><br><span class="line">        <span class="string">npm</span> <span class="string">i</span> <span class="string">-g</span> <span class="string">hexo-cli</span> <span class="comment"># 安装hexo</span></span><br><span class="line">        <span class="string">npm</span> <span class="string">i</span></span><br><span class="line">  </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Deploy</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line">        <span class="comment"># publish</span></span><br><span class="line">        <span class="string">hexo</span> <span class="string">generate</span></span><br><span class="line">        <span class="comment"># 执行部署程序</span></span><br><span class="line">        <span class="string">hexo</span> <span class="string">deploy</span> </span><br></pre></td></tr></table></figure>
+<h2 id="配置-cdn-和自定义域名"><a href="#配置-cdn-和自定义域名" class="headerlink" title="配置 cdn 和自定义域名"></a>配置 cdn 和自定义域名</h2><p>完成上面两步就能实现推送博客仓库时，自动部署静态站点的工作</p>
+<p>访问博客过程中发现 github 的速度较慢，于是借助免费 cdn jsdelivr 来加速一些静态资源，github 仓库中的文件天然就能通过 jsdelivr链接访问到，比如你的 <code>your_github_name.github.io</code> 仓库中的 <code>css/style.css</code> 文件对应的 jsdelivr 链接就是 <code>https://cdn.jsdelivr.net/gh/your_github_name/your_github_name.github.io@master/css/style.css</code></p>
+<p>利用上述 cdn 原理，可以在 <code>hexo generate</code> 后通过替换 html 代码中资源链接的方式来使用 cdn，比如我要替换 js 的路径，使用 sed 命令将所有 html 文件中 <code>/src=&quot;/js</code> 开头的资源文件前面替换加上 jsdelivr 的路径</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ find . -<span class="built_in">type</span> f -name *.html | \</span><br><span class="line">xargs sed -i <span class="string">&#x27;s/src=&quot;\/js\//src=&quot;https:\/\/cdn.jsdelivr.net\/gh\/your_github_name/your_github_name.github.io@master\/js\//g&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>同理可以替换 css 等其他资源，将相关代码填在 actions 中 <code>hexo generate</code> 和 <code>hexo deploy</code> 之间，在 action 执行的时候会完成替换</p>
+<p>另外，如果想要配置自定义域名，需要在域名中添加一条 cname 的解析指向 your_github_name.github.io 域名，并在站点 source 目录中添加一个 CNAME 文件并填上你的域名，最后在 <code>GitHub Pages</code> 设置中填上并开启自定义域名</p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="https://techub.pw/2021/02/14/notes/use-github-action-and-jsdelivr-cdn-to-auto-deploy-and-speed-up-hexo-blog/" title="使用github-action自动部署hexo博客，并配置免费cdn加速访问" target="_blank" rel="external">https://techub.pw/2021/02/14/notes/use-github-action-and-jsdelivr-cdn-to-auto-deploy-and-speed-up-hexo-blog/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/lukedever" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.png" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/lukedever" target="_blank"><span class="text-dark">路客</span><small class="ml-1x">Go &amp; PHP Developer</small></a></h3>
+        <div>Keep learning, keep living。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      </div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2021/02/22/notes/centos-install-puppeteer/" title="centos安装并使用无头浏览器puppeteer"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+    </li>
+    
+    
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/lukedever" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+   
+    
+    <script defer>
+    var disqus_config = function () {
+        
+            this.page.url = 'https://techub.pw/2021/02/14/notes/use-github-action-and-jsdelivr-cdn-to-auto-deploy-and-speed-up-hexo-blog/';
+        
+        this.page.identifier = 'notes/use-github-action-and-jsdelivr-cdn-to-auto-deploy-and-speed-up-hexo-blog';
+    };
+    (function() { 
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'luke-blog' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+
+
+
+
+
+
+
+</body>
+</html>
